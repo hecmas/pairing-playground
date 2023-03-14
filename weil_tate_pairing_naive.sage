@@ -1,7 +1,10 @@
 import os
 os.system('sage --preparse divisors.sage')
 os.system('mv divisors.sage.py divisors.py')
+os.system('sage --preparse tools.sage')
+os.system('mv tools.sage.py tools.py')
 from divisors import evaluate_function_on_divisor,Divisor
+from tools import log2, embedding_degree
 
 def embedding_degree(q,r):    
     k = 1
@@ -34,6 +37,25 @@ def l(P, Q, D):
     else:
         f = x - P.xy()[0]
         return evaluate_function_on_divisor(f,D)
+    
+def line(P, Q):
+    assert P.is_zero() != True and Q.is_zero() != True
+
+    # First case: P and Q are distinct and not on the same vertical line
+    if P.xy()[0] != Q.xy()[0]:
+        m = (Q.xy()[1] - P.xy()[1]) / (Q.xy()[0] - P.xy()[0])
+        c = P.xy()[1] - m * P.xy()[0]
+
+        return y - m * x - c
+    # Second case: P and Q are the same point
+    elif P.xy()[1] == Q.xy()[1]:
+        m = (3 * P.xy()[0] * P.xy()[0] + E.a4()) / (2 * P.xy()[1])
+        c = P.xy()[1] - m * P.xy()[0]
+        return y - m * x - c
+    # Third case: P and Q are distinct and on the same vertical line
+    # The line is x = P.xy()[0]
+    else:
+        return x - P.xy()[0]
 
 # This is the BKLS-GHS version of Miller's algorithm for computing the Weil and Tate pairings
 # Note: It only works for even embedding degrees k
@@ -48,10 +70,10 @@ def Miller_Loop(P,D):
     R = P
     f = F.one()
     # Only loop until the second to last bit of r
-    for i in range(len(rbin)-2,0,-1):
+    for i in range(log2(r)-2,0,-1):
         f = f * f * l(R,R,D) / l(-2*R,2*R,D)
         R = 2 * R
-        if rbin[i] == 1:
+        if r & 2^i:
             f = f * l(R,P,D) / l(-(R+P),R+P,D)
             R = R + P
 
@@ -64,11 +86,17 @@ def Weil(P,Q):
     DQ = Divisor([1,-1],[2*Q,Q])
     a = Miller_Loop(P,DQ)
     b = Miller_Loop(Q,DP)
-    c = (l(Q,Q,DP) / l(-2*Q,2*Q,DP))^r
-    print("a",a)
-    print("b",b)
-    print("c",c)
-    return a/(b/c)
+    lP = line(P,P)
+    v2P = line(2*P,-2*P)
+    lQ = line(Q,Q)
+    v2Q = line(2*Q,-2*Q)
+    c = evaluate_function_on_divisor(lP,DQ)
+    d = evaluate_function_on_divisor(v2P,DQ)
+    e = evaluate_function_on_divisor(lQ,DP)
+    f = evaluate_function_on_divisor(v2Q,DP)
+    A = a / (c / d)^3
+    B = b / (e / f)^3
+    return A/B
 
 def Tate(P,Q):
     DQ = Divisor([1,-1],[2*Q,Q])
@@ -76,39 +104,34 @@ def Tate(P,Q):
     # Here, k is the embedding degree of E
     return Miller_Loop(P,DQ)^((q^k-1)/r)
 
-q = 47
+q = 23
 F = GF(q)
 PR.<x,y> = PolynomialRing(F)
-E = EllipticCurve(F, [21,15])
+E = EllipticCurve(F, [-1,0])
 n = E.order()
 # the torsion group parameter r is typically chosen 
 # as the largest prime factor of the order of the curve
 r = n.factor()[-1][0]
 k = embedding_degree(q,r)
-assert k % 2 == 0
 
-P = E(45,23)
+P = E(2,11)
 assert r*P == E(0) # P is in the r-torsion subgroup
 
 # To define Q, we need to move to the extension field F_{q**k}
-K.<u> = GF(q^k, modulus=x^4-4*x^2+5)
-eE = EllipticCurve(K, [21,15])
+K.<i> = GF(q^k, modulus=x^2+1)
+PRK.<x,y> = PolynomialRing(K)
+eE = EllipticCurve(K, [-1,0])
 
-Q = eE(31*u^2 + 29, 35*u^3 + 11*u)
-assert 17*Q == eE(0) # Q is in the r-torsion subgroup
-#TODO: Check that Q is in the trace zero subgroup
+Q = eE(21, 12*i)
+assert r*Q == eE(0) # Q is in the r-torsion subgroup
 
-rbin = r.digits(2)
-# assert Tate(P,Q) == 33*u^3 + 43*u^2 + 45*u + 39
-print(Weil(P,Q))
-# assert Weil(P,D) == 22*u^3 + 12*u^2 + 32*u + 13
+assert Weil(P,Q) == 15*i + 11
 
 # For sure, the pairing is non-degenerate
 assert P.additive_order() == Q.additive_order() == r
-# assert Weil(P,Q) != F.one()
+assert Weil(P,Q) != F.one()
 
 # # Let's check the bilinearity of the pairing
-assert Tate(2*P, 12*Q) == Tate(P,12*Q)^2 == Tate(2*P,Q)^12 == Tate(P,Q)^24 == Tate(12*P,2*Q)
 # assert Weil(2*P, 12*Q) == Weil(P,12*Q)^2 == Weil(2*P,Q)^12 == Weil(P,Q)^24 == Weil(12*P,2*Q)
 
 # # Check the trivial evaluations are satisfied
@@ -116,4 +139,49 @@ assert Tate(2*P, 12*Q) == Tate(P,12*Q)^2 == Tate(2*P,Q)^12 == Tate(P,Q)^24 == Ta
 
 # # Since P and Q are generators, we should have that Weil(P,D) is a primitive r-th root of unity
 # # i.e. a generator of set of roots of unity of order r
-# assert multiplicative_order(Weil(P,Q)) == r
+assert multiplicative_order(Weil(P,Q)) == r
+
+
+
+
+
+# q = 47
+# F = GF(q)
+# PR.<x,y> = PolynomialRing(F)
+# E = EllipticCurve(F, [21,15])
+# n = E.order()
+# # the torsion group parameter r is typically chosen 
+# # as the largest prime factor of the order of the curve
+# r = n.factor()[-1][0]
+# k = embedding_degree(q,r)
+# assert k % 2 == 0
+
+# P = E(45,23)
+# assert r*P == E(0) # P is in the r-torsion subgroup
+
+# # To define Q, we need to move to the extension field F_{q**k}
+# K.<u> = GF(q^k, modulus=x^4-4*x^2+5)
+# eE = EllipticCurve(K, [21,15])
+
+# Q = eE(31*u^2 + 29, 35*u^3 + 11*u)
+# assert 17*Q == eE(0) # Q is in the r-torsion subgroup
+# #TODO: Check that Q is in the trace zero subgroup
+
+# # assert Tate(P,Q) == 33*u^3 + 43*u^2 + 45*u + 39
+# print(Weil(P,Q))
+# # assert Weil(P,D) == 22*u^3 + 12*u^2 + 32*u + 13
+
+# # For sure, the pairing is non-degenerate
+# assert P.additive_order() == Q.additive_order() == r
+# # assert Weil(P,Q) != F.one()
+
+# # # Let's check the bilinearity of the pairing
+# assert Tate(2*P, 12*Q) == Tate(P,12*Q)^2 == Tate(2*P,Q)^12 == Tate(P,Q)^24 == Tate(12*P,2*Q)
+# # assert Weil(2*P, 12*Q) == Weil(P,12*Q)^2 == Weil(2*P,Q)^12 == Weil(P,Q)^24 == Weil(12*P,2*Q)
+
+# # # Check the trivial evaluations are satisfied
+# # assert Weil(E(0),Q) == Weil(P,E(0)) == F.one()
+
+# # # Since P and Q are generators, we should have that Weil(P,D) is a primitive r-th root of unity
+# # # i.e. a generator of set of roots of unity of order r
+# # assert multiplicative_order(Weil(P,Q)) == r
