@@ -1,5 +1,4 @@
 
-# TODO: Add the zero divisor
 class Divisor():
     def __init__(self, multiplicites, points):
         assert len(multiplicites) == len(points)
@@ -19,11 +18,14 @@ class Divisor():
             self.sum[points[i]] = multiplicites[i]
 
     def __repr__(self):
+        if len(self.multiplicites) == 0:
+            return "0"
+
         result = ""
         for i in range(len(self.multiplicites)-1):
-            result += str(self.multiplicites[i]) + " " + str(self.points[i]) + " + "
+            result += str(self.multiplicites[i]) + " " + str(self.points[i].xy()) + " + "
 
-        result += str(self.multiplicites[-1]) + " " + str(self.points[-1])
+        result += str(self.multiplicites[-1]) + " " + str(self.points[-1].xy())
         
         return result
 
@@ -48,9 +50,8 @@ class Divisor():
         return Divisor(multiplicites, points)
     
     def __neg__(self):
-        for key in self.sum.keys():
-            self.sum[key] = -self.sum[key]
-        return self
+        negative = [-m for m in self.multiplicites]
+        return Divisor(negative, self.points)
 
     def __sub__(self, other):
         return self + (-other)
@@ -60,7 +61,7 @@ class Divisor():
     
     def __ne__(self, other):
         return not self == other
-    
+
     def is_principal(self):
         addition = E(0)
         for i in range(len(self.multiplicites)):
@@ -71,14 +72,21 @@ class Divisor():
         else:
             return False
 
+    @classmethod
+    def zero(cls):
+        return Divisor([], [])
+
 def evaluate_function_on_divisor(f,D):
     # TODO: Add a check for disjoint supports
     result = 1
+    if D == Divisor.zero():
+        return result
+
     for i in range(len(D.multiplicites)):
         result *= f(D.points[i].xy()) ^ D.multiplicites[i]
     return result
 
-# Test 1
+# # Test 1
 # q = 47
 # F = GF(q)
 # E = EllipticCurve(F, [21,15])
@@ -93,10 +101,13 @@ def evaluate_function_on_divisor(f,D):
 # assert D2.support == [E(1,32), E(2,21), E(6,13)]
 # assert D3.support == [E(1,15), E(2,21), E(6,13)]
 
+# # The zero divisor
+# assert D1 - D1 == Divisor.zero()
+
 # D = Divisor([1,1,-2],[E(1,15),E(1,32),E(0)])
 # assert D.is_principal() == True
 
-# Test 2
+# # Test 2
 # q = 163
 # F = GF(q)
 # E = EllipticCurve(F, [-1,-2])
@@ -117,3 +128,4 @@ def evaluate_function_on_divisor(f,D):
 # D3 = Divisor([1,1,-2],[R,S,E(0)])
 # assert evaluate_function_on_divisor(lPQ,D1) == 122
 # assert evaluate_function_on_divisor(lPP,D2) == 53
+# assert evaluate_function_on_divisor(lPQ,Divisor.zero()) == 1
