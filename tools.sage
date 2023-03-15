@@ -36,3 +36,7 @@ def line(P, Q, T, E):
     # The line is y = P.xy()[0]
     else:
         return T.xy()[1] - P.xy()[0]
+
+# TODO  
+# def twist(E):
+#     return EllipticCurve([E.a1(),E.a2(),E.a3(),E.a4(),E.a6()])
