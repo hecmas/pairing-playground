@@ -1,10 +1,7 @@
 import os
-os.system('sage --preparse divisors.sage weil_tate_pairing_naive.sage')
+os.system('sage --preparse divisors.sage')
 os.system('mv divisors.sage.py divisors.py')
-os.system('mv weil_tate_pairing_naive.sage.py weil_tate_pairing_naive.py')
-from tools import embedding_degree
 from divisors import evaluate_function_on_divisor,Divisor
-from weil_tate_pairing_naive import Weil, Tate
 
 # Test 1: Divisor playground
 q = 47
@@ -64,5 +61,3 @@ Df = Divisor([2,1,-1,-2],[P1,P2,P3,P4])
 Dg = Divisor([1,1,1,1,-4],[Q1,Q2,Q3,Q4,E(0)])
 # If (f) and (g) have disjoint supports, then Weil reciprocity ensures that f((g)) = g((f))
 assert evaluate_function_on_divisor(f,Dg) == evaluate_function_on_divisor(g,Df) == 321
-
-# Test 4: Weil-Tate pairing

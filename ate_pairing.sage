@@ -5,14 +5,10 @@ from tools import log2, embedding_degree, line
 
 # This is the ate pairing obtained with loop shortening optimizations
 # Note: It only works for even embedding degrees k
-# r is assumed to be in binary form as r[i]
-# For sure, Q is assumed to be from the (only) subgroup of E[r] over F_q
-# P is assumed to be from the trace zero subgroup of E[r] over F_{q**k}
+# For sure, Q is assumed to be from the trace zero subgroup of E[r] over F_{q**k}
+# P is assumed to be from the (only) subgroup of E[r] over F_q
 # i.e., a (reversed) Type 3 pairing is assumed
 def Miller_Loop(Q,P):
-    if P.is_zero() == True or Q.is_zero() == True:
-        return F.one()
-
     R = Q
     f = F.one()
     for i in range(log2(T)-2,-1,-1):
@@ -25,8 +21,12 @@ def Miller_Loop(Q,P):
     return f
 
 def ate(Q,P):
+    if Q.is_zero() or P.is_zero():
+        return F.one()
+
     return Miller_Loop(Q,P)^((q^k-1)/r)
 
+# Test 1: Ate Pairing
 q = 47
 F = GF(q)
 E = EllipticCurve(F, [21,15])
@@ -45,7 +45,7 @@ K.<u> = GF(q^k, modulus=x^4-4*x^2+5)
 eE = EllipticCurve(K, [21,15])
 
 Q = eE(31*u^2 + 29, 35*u^3 + 11*u)
-assert 17*Q == eE(0) # Q is in the r-torsion subgroup
+assert r*Q == eE(0) # Q is in the r-torsion subgroup
 
 t = q+1-n
 T = abs(t-1)
