@@ -9,7 +9,7 @@ from tools import log2, embedding_degree
 # Find line y = mx + c passing through two points P and Q
 # or vertical line y = x0 if Q = -P
 # and evaluate it at a divisor D
-def l(P, Q, D):
+def line(P, Q, D):
     assert P.is_zero() != True and Q.is_zero() != True
 
     # First case: P and Q are distinct and not on the same vertical line
@@ -40,13 +40,13 @@ def Miller_Loop(P,D):
     f = F.one()
     # Only loop until the second to last bit of r
     for i in range(log2(r)-2,0,-1):
-        f = f * f * l(R,R,D) / l(-2*R,2*R,D)
+        f = f * f * line(R,R,D) / line(-2*R,2*R,D)
         R = 2 * R
         if r & 2^i:
-            f = f * l(R,P,D) / l(-(R+P),R+P,D)
+            f = f * line(R,P,D) / line(-(R+P),R+P,D)
             R = R + P
 
-    f = f * f * l(R,R,D)
+    f = f * f * line(R,R,D)
 
     return f
 
@@ -58,10 +58,10 @@ def Weil(P,Q):
     DQ = Divisor([1,-1],[2*Q,Q])
     frP = Miller_Loop(P,DQ)
     frQ = Miller_Loop(Q,DP)
-    lPP = l(P,P,DQ)
-    v2P = l(-2*P,2*P,DQ)
-    lQQ = l(Q,Q,DP)
-    v2Q = l(-2*Q,2*Q,DP)
+    lPP = line(P,P,DQ)
+    v2P = line(-2*P,2*P,DQ)
+    lQQ = line(Q,Q,DP)
+    v2Q = line(-2*Q,2*Q,DP)
     A = frP / (lPP / v2P)^3
     B = frQ / (lQQ / v2Q)^3
     return A/B
