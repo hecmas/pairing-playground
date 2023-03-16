@@ -1,0 +1,28 @@
+clear;
+q:=RandomPrime(50);
+Fq:=GF(q);
+a:=Random(Fq); b:=Random(Fq);
+E:=EllipticCurve([Fq|a,b]);
+F<x,y>:=FunctionField(E);
+O:=PointsAtInfinity(E)[1];
+
+points:=[];
+xcoords:=[];
+ycoords:=[];
+
+D:=Divisor(O)-Divisor(O);
+for i:=1 to 11 do 
+	Pi:=Random(E);
+	xcoords:=Append(xcoords,Pi[1]);
+	ycoords:=Append(ycoords,Pi[2]);
+	points:=Append(points,Pi); 
+	D:=D+Divisor(Pi)-Divisor(O);
+end for;
+
+l:=y-Evaluate(Interpolation(xcoords,ycoords),x);
+Support(Divisor(l));
+
+Dd:=Divisor(l)-D;
+Support(Dd); // Divisors not necessarily defined over Fq
+ 
+

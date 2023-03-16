@@ -1,0 +1,34 @@
+clear;
+
+x:=258419657403767392;
+
+q:=(x-1)^2*(x^8-x^4+1) div 3+x;
+r:=(x^8-x^4+1);
+Fq:=GF(q);
+i:=1;
+E:=EllipticCurve([Fq|0,i]);
+
+while #E mod r ne 0 do
+	i+:=1;
+	E:=EllipticCurve([Fq|0,i]);
+end while;
+
+#E mod r;
+
+x:=144115188109674496;
+
+q:=(x-1)^2*(x^8-x^4+1) div 3+x;
+r:=(x^8-x^4+1);
+Fq:=GF(q);
+i:=1;
+E2:=EllipticCurve([Fq|0,i]);
+
+while #E2 mod r ne 0 do
+	i+:=1;
+	E2:=EllipticCurve([Fq|0,i]);
+end while;
+
+#E2 mod r;
+
+E,E2;
+

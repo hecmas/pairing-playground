@@ -1,0 +1,33 @@
+clear;
+Fq:=GF(163);
+a:=-1; b:=-2;
+E:=EllipticCurve([Fq|a,b]);
+
+P:=E![43,154];
+Q:=E![46,38];
+R:=E![12,35];
+S:=E![5,66];
+
+DP:=Divisor(P);
+DQ:=Divisor(Q);
+
+F<x,y>:=FunctionField(E);
+
+lambda:=(3*P[1]^2+a)/(2*P[2]);
+nu:=P[2]-lambda*P[1];
+f2P:=y-(lambda*x+nu);
+
+lambda:=(3*Q[1]^2+a)/(2*Q[2]);
+nu:=Q[2]-lambda*Q[1];
+f2Q:=y-(lambda*x+nu);
+
+lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+nu:=P[2]-lambda*P[1];
+fPQ:=y-(lambda*x+nu);
+
+Evaluate(fPQ,R)^2*Evaluate(fPQ,S);
+Evaluate(f2P,R)^3/Evaluate(f2P,S)^3;
+
+//Evaluate(f2Q,R)*Evaluate(f2Q,S)/Evaluate(f2Q,Identity(E))^2; // gives error... because...
+
+Evaluate(f2Q,Identity(E))^2;

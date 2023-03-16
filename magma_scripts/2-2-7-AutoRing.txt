@@ -1,0 +1,32 @@
+clear;
+
+Fq:=GF(17);
+a:=10; b:=0;
+E:=EllipticCurve([Fq|a,b]);
+AllRoots(Fq!-1,2);
+i:=AllRoots(Fq!-1,2)[1];
+P:=Random(E);
+while P eq PointsAtInfinity(E)[1] do
+	P:=Random(E);
+end while;
+P;
+E![-P[1],i*P[2]];
+AutomorphismGroup(E);
+
+clear;
+
+Fq:=GF(19);
+a:=10; b:=0;
+E:=EllipticCurve([Fq|a,b]);
+AllRoots(Fq!-1,2);
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+AllRoots(Fq2!-1,2)[1];
+P:=Random(E);
+while P eq PointsAtInfinity(E)[1] do
+	P:=Random(E);
+end while;
+P;
+E(Fq2)![-P[1],i*P[2]];
+AutomorphismGroup(E);
+AutomorphismGroup(BaseChange(E,Fq2));
+

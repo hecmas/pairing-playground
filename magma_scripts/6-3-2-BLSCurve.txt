@@ -1,0 +1,28 @@
+clear;
+
+x:=2^63+2;
+x:=9223372036854782449;
+q:=(x-1)^2*(x^8-x^4+1) div 3+x;
+r:=(x^8-x^4+1);
+
+while not IsPrime(q) or not IsPrime(r) do
+	x+:=3;
+	q:=(x-1)^2*(x^8-x^4+1) div 3+x;
+	r:=(x^8-x^4+1);
+end while;
+
+Fq:=GF(q);
+i:=1;
+E:=EllipticCurve([Fq|0,i]);
+
+while #E mod r ne 0 do
+	i+:=1;
+	E:=EllipticCurve([Fq|0,i]);
+end while;
+
+k:=1;
+#E mod r;
+while (q^k-1) mod r ne 0 do
+	k+:=1;
+end while;
+k;

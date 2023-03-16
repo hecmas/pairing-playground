@@ -1,0 +1,25 @@
+clear;
+Fq:=GF(101);
+a:=1; b:=1;
+E:=EllipticCurve([Fq|a,b]);
+Poly<x>:=PolynomialRing(Fq);
+psi2<x>:=DivisionPolynomial(E,2);
+psi3<x>:=DivisionPolynomial(E,3);
+psi5<x>:=DivisionPolynomial(E,5);
+psi7<x>:=DivisionPolynomial(E,7);
+psi11<x>:=DivisionPolynomial(E,11);
+
+Roots(psi2);
+Roots(psi3);
+x1:=Roots(psi3)[1][1]; x2:=Roots(psi3)[2][1];
+Points(E,x1);
+Points(E,x2);
+Roots(psi5);
+x1:=Roots(psi5)[1][1]; x2:=Roots(psi5)[2][1];
+Points(E,x1);
+Points(E,x2);
+Roots(psi7);
+x1:=Roots(psi7)[1][1]; x2:=Roots(psi7)[2][1]; x3:=Roots(psi7)[3][1];
+Points(E,x1);
+Points(E,x2);
+Points(E,x3);

@@ -1,0 +1,21 @@
+clear;
+
+Fq:=GF(67);
+Fq2<u>:=ExtensionField<Fq,x|x^2+1>;
+Fq3<v>:=ExtensionField<Fq,x|x^3+2>;
+
+E:=EllipticCurve([Fq|4,3]);
+pi:=FrobeniusMap(E);
+pi2:=FrobeniusMap(E,2);
+pi3:=FrobeniusMap(E,3);
+
+P1:=E![15,50];
+P2:=E(Fq2)![2*u + 16, 30*u + 39];
+P3:=E(Fq3)![15*v^2 + 4*v + 8 , 44*v^2 + 30*v + 21];
+
+P1; pi(P1);  
+
+P2; pi(P2); pi2(P2); 
+
+P3; pi(P3); pi2(P3); pi3(P3);
+

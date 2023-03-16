@@ -1,0 +1,29 @@
+clear;
+
+Fq:=GF(1021);
+a:=905; b:=100;
+E:=EllipticCurve([Fq|a,b]);
+Factorization(#E);
+P:=E![1006,416];
+Q:=E![612,827];
+P2:=(#E div 2)*P; P3:=(#E div 3)*P; P7:=(#E div 7)*P; P23:=(#E div 23)*P;
+Q2:=(#E div 2)*Q; Q3:=(#E div 3)*Q; Q7:=(#E div 7)*Q; Q23:=(#E div 23)*Q;
+k2:=1; 
+while k2*P2 ne Q2 do
+	k2+:=1;
+end while;
+k3:=1; 
+while k3*P3 ne Q3 do
+	k3+:=1;
+end while;
+k7:=1; 
+while k7*P7 ne Q7 do
+	k7+:=1;
+end while;
+k23:=1; 
+while k23*P23 ne Q23 do
+	k23+:=1;
+end while;
+k:=ChineseRemainderTheorem([k2,k3,k7,k23],[2,3,7,23]);
+k*P eq Q;
+

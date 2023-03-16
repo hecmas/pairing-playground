@@ -1,0 +1,58 @@
+clear;
+
+q:=19;
+Fq:=GF(q);
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+a:=14;
+b:=3;
+E:=EllipticCurve([Fq|a,b]);
+Factorization(#E);
+E:=BaseChange(E,Fq2);
+Factorization(#E);
+O:=PointsAtInfinity(E)[1];
+F<x,y>:=FunctionField(E);
+
+r:=5;
+h:=#E div r^2;
+
+P:=E![17,9];
+Q:=E![16,16*i];
+
+fDBL:=function(P);
+	lambda:=(3*P[1]^2+a)/(2*P[2]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-2*P[1]));
+	return F!(l/v);
+end function;
+
+fADD:=function(P,Q);
+	lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-P[1]-P[2]));
+	return F!(l/v);
+end function;
+
+/*f:=fDBL(P);
+f2:=fADD(P,2*P);
+f3:=fADD(P,3*P);
+f4:=(x-(4*P)[1]);
+f(Q);
+f(2*Q);
+*/
+
+TatePairing(P,Q,r);
+TatePairing(P,Q,r)^4;
+TatePairing(4*P,Q,r);
+TatePairing(P,4*Q,r);
+TatePairing(2*P,2*Q,r);
+
+ReducedTatePairing(P,Q,r);
+ReducedTatePairing(P,Q,r)^4;
+ReducedTatePairing(4*P,Q,r);
+ReducedTatePairing(P,4*Q,r);
+ReducedTatePairing(2*P,2*Q,r);
+
+(4*i+2)^r;
+

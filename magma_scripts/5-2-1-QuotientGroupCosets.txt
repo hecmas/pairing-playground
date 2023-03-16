@@ -1,0 +1,68 @@
+clear;
+
+q:=5;
+Fq:=GF(q);
+Fq2<i>:=ExtensionField<Fq,x|x^2+2>;
+a:=0;
+b:=-3;
+E:=EllipticCurve([Fq|a,b]);
+E2:=BaseChange(E,Fq2);
+Factorization(#E);
+Factorization(#E2);
+IsSupersingular(E);
+
+r:=3;
+h:=#E2 div r^2;
+
+points:=Points(E2);
+rmap:=MultiplicationByMMap(E2,r);
+ker:=Kernel(rmap);
+iso:=IsogenyFromKernel(ker);
+
+coset:={r*i: i in points};
+coset:=[i: i in coset];
+ALL:={i: i in coset};
+coset;
+
+
+while #ALL lt #E2 do
+R:=Random(E2);
+if (coset[1]+R) notin ALL then
+	cosetnew:={};
+	for i:=1 to #coset do 
+		Include(~cosetnew,coset[i]+R);
+		Include(~ALL,coset[i]+R);
+	end for;
+	cosetnew;
+end if;
+end while;
+
+TorsPts:={};
+
+for i:=1 to #points do
+	if r*points[i] eq points[1] then
+		Include(~TorsPts,points[i]);
+	end if;
+end for;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+FlowerGenerator(TorsPts);
+

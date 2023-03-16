@@ -1,0 +1,20 @@
+clear;
+
+r:=RandomPrime(30); 
+R:=quo<RingOfIntegers()|r>; //Z_r
+G1:=MultiplicativeGroup(R);
+GT:=MultiplicativeGroup(R);
+Rn1:=quo<RingOfIntegers()|r-1>;
+G2:=AdditiveGroup(Rn1);
+g1:=Random(G1);
+g2:=Random(G1);
+a1:=Random(0,r-1);
+a2:=Random(0,r-1);
+//Magma takes additive notation for G1, GT
+function map(g,a);
+	return a*g; 
+end function;
+
+map(g1,a1)+map(g2,a1) eq map(g1+g2,a1); 
+map(g1,a1)+map(g1,a2) eq map(g1,a1+a2); 
+map(g1+g2,a1+a2) eq map(g1,a1)+map(g1,a2)+map(g2,a1)+map(g2,a2);

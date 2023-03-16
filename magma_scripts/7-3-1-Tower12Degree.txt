@@ -1,0 +1,12 @@
+clear;
+
+q:=97;
+Fq:=GF(q);
+beta:=5;
+Fqk<T>:=ExtensionField<Fq,x|x^12-beta>;
+
+Fq2<u>:=ExtensionField<Fq,x|x^2-beta>;
+Fq6<v>:=ExtensionField<Fq2,x|x^3-u>;
+Fq12<w>:=ExtensionField<Fq6,x|x^2-v>;
+
+Random(Fq12);

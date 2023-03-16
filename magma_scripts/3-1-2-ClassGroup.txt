@@ -1,0 +1,24 @@
+clear;
+q:=61;
+Fq:=GF(q);
+a:=8; b:=1;
+E:=EllipticCurve([Fq|a,b]);
+F<x,y>:=FunctionField(E);
+
+P:=E![57,24];
+Q:=E![25,37];
+R:=E![17,32];
+S:=E![42,35];
+O:=PointsAtInfinity(E)[1];
+
+D1:=Divisor(P)+Divisor(Q)+Divisor(R);
+D2:=4*Divisor(O)-Divisor(S);
+
+IsLinearlyEquivalent(D1,D2);
+bool,f:=IsLinearlyEquivalent(D1,D2);
+
+Support(Divisor(f));
+
+Degree(D1-D2);
+Support(D1-D2);
+P+Q+R+S-4*O;

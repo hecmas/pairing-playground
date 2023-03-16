@@ -1,0 +1,42 @@
+clear;
+q:=31;
+Fq:=GF(q);
+a:=0; b:=13;
+E:=EllipticCurve([Fq|a,b]);
+Factorization(#E);
+r:=5;
+
+points:=Points(E);
+
+TorsPts:={};
+
+for i:=1 to #points do
+	if r*points[i] eq Identity(E) then
+		Include(~TorsPts,points[i]);
+	end if;
+end for;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+FlowerGenerator(TorsPts);
+
+
+
+

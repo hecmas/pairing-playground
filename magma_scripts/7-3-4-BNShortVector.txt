@@ -1,0 +1,156 @@
+clear;
+
+//This code was written by Paulo Barreto
+//It was passed to me by Luis Dominguez Perez
+
+function IsWeakPopov(pivot_index)
+  n := #pivot_index;
+  for k in [1..n-1] do
+    if pivot_index[k] eq 0 then
+      continue; // k not in carrier set
+    end if;
+    for l in [k+1..n] do
+      if pivot_index[l] eq 0 then
+        continue; // l not in carrier set
+      end if;
+      if pivot_index[k] eq pivot_index[l] then
+        return false;
+      end if;
+    end for;
+  end for;
+  return true;
+end function;
+
+function PivotIndex(M)
+  n := Nrows(M);
+  m := Ncols(M);
+  pivot_index := [0 : i in [1..n]];
+  for i in [1..n] do
+    // find rightmost element with maximal degree in the i-th row:
+    max_deg := -1; max_j := 0;
+    for j := m to 1 by -1 do
+      deg := Degree(M[i, j]);
+      if deg gt max_deg then
+        max_deg := deg; max_j := j;
+      end if;
+    end for;
+    pivot_index[i] := max_j;
+  end for;
+  return pivot_index;
+end function;
+
+function WeakPopov(M,x)
+  n := Nrows(M);
+  m := Ncols(M);
+  while true do
+    pivot_index := PivotIndex(M);
+    if IsWeakPopov(pivot_index) then
+      break;
+    end if;
+    // apply first kind transforms to force M into weak Popov form
+    for k in [1..n] do
+      if pivot_index[k] eq 0 then
+        continue; // k not in carrier set
+      end if;
+      D := Degree(M[k, pivot_index[k]]);
+      P := LeadingCoefficient(M[k, pivot_index[k]]);
+      for l in [1..n] do
+        if l eq k then
+          continue;
+        end if;
+        if Degree(M[l, pivot_index[k]]) ge D then
+          // apply simple transform of 2nd kind:
+          c := LeadingCoefficient(M[l, pivot_index[k]])/P;
+          e := Degree(M[l, pivot_index[k]]) - D;
+          M[l] -:= c*x^e*M[k];
+          break k; // only one transform!
+        end if;
+      end for;
+    end for;
+  end while;
+  return M;
+end function;
+
+function RelaxedWeakPopov(M,x)
+    n := Nrows(M);
+    m := Ncols(M);
+    for count in [1..1000] do // only way to ensure the algorithm will terminate
+        pivot_index := PivotIndex(M);
+        if IsWeakPopov(pivot_index) then
+            break;
+        end if;
+        // apply first kind transforms to force M into weak Popov form
+        for k in [1..n] do
+            if pivot_index[k] eq 0 then
+                continue; // k not in carrier set
+            end if;
+            D := Degree(M[k, pivot_index[k]]);
+            P := LeadingCoefficient(M[k, pivot_index[k]]);
+            for l in [1..n] do
+                if l eq k then
+                    continue;
+                end if;
+                if Degree(M[l, pivot_index[k]]) ge D then
+                    // apply simple transform of 2nd kind:
+                    c := LeadingCoefficient(M[l, pivot_index[k]]);
+                    if c mod P eq 0 then
+                        c := LeadingCoefficient(M[l, pivot_index[k]]) div P;
+                        e := Degree(M[l, pivot_index[k]]) - D;
+                        M[l] -:= c*x^e*M[k];
+                        break k; // only one transform!
+                    end if;
+                end if;
+            end for;
+        end for;
+    end for;
+    return M;
+end function;
+
+ConstructM:=function(R,k,r,t,x)
+  m:=EulerPhi(k);
+  l:=[];
+  for i:=1 to m do
+    n:=[];
+    for j:=1 to m do
+      Append(~n,0);
+    end for;
+    Append(~l,n);
+  end for;
+  M:=Matrix(R,m,m,l);
+  M[1][1]:=r;
+  T:=t-1;
+  for i:=2 to m do
+    M[i][1]:=-T^(i-1);
+    M[i][i]:=1;
+  end for;
+  return M;
+end function;
+
+setOptimalPairing:=procedure(~p,~r,~t,~k,~Zx,~x,~z,~O,~pivot_index,~flag)
+
+  M:=ConstructM(Zx,k,r,t,x);
+  pivot_index := PivotIndex(M);
+
+  if BaseRing(Zx) eq Rationals() then
+    N := WeakPopov(M,x);
+  else
+    N := RelaxedWeakPopov(M,x);
+  end if;
+  pivot_index := PivotIndex(N);
+  flag:=IsWeakPopov(pivot_index);
+  if flag eq true then
+    O:=N;
+  end if;
+end procedure;
+
+Zx<x>:=PolynomialRing(Integers());
+
+k:=12;
+px:= 36*x^4 + 36*x^3 + 24*x^2 + 6*x + 1;
+rx:= 36*x^4 + 36*x^3 + 18*x^2 + 6*x + 1;
+tx:= 6*x^2+1;
+
+setOptimalPairing(~px,~rx,~tx,~k,~Zx,~x,~z,~N,~pivot_index,~flag);
+print N;
+printf "The shortest vector is: %o", N[pivot_index];
+

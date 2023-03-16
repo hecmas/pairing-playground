@@ -1,0 +1,22 @@
+clear;
+q:=RandomPrime(20); //bits in prime
+Fq:=GF(q);
+a:=Random(Fq); b:=Random(Fq);
+E:=EllipticCurve([Fq|a,b]);
+P:=Random(E);
+X:=P[1]; Y:=P[2]; Z:=P[3];
+
+X3:=2*Y*Z*(9*X^4+6*X^2*a*Z^2+a^2*Z^4-8*X*Z*Y^2);
+Y3:=-(27*X^6+27*X^4*a*Z^2+9*X^2*a^2*Z^4-36*X^3*Z*Y^2+a^3*Z^6-12*a*Z^3*X*Y^2+8*Y^4*Z^2);
+Z3:=8*Y^3*Z^3;
+
+lambda:=(1/2)*(3*X^2+Z^2)/(Y*Z);
+nu:=-(1/2)*(3*X^3+X*Z^2-2*Y^2*Z)/(Y*Z^2);
+
+LAMBDA:=Z*(3*X^2+Z^2);
+NU:=-(3*X^3+X*Z^2-2*Y^2*Z);
+CO:=2*Y*Z^2;
+
+E![X3/Z3,Y3/Z3];
+
+CO*(P[2])-LAMBDA*(P[1])-NU;

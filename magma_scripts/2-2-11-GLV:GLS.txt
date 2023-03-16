@@ -1,0 +1,39 @@
+clear;
+
+q:=1048589;
+Fq:=GF(q);
+E:=EllipticCurve([Fq|2,0]);
+Factorization(#E);
+r:=524053;
+AllRoots(Fq!-1,2);
+i:=38993;
+AllRoots(GF(r)!-1,2);
+lambda:=304425; 
+
+P:=E![609782,274272];
+
+psi:=function(P,E);
+	return E![-P[1],i*P[2]];
+end function;
+
+psi(P,E)-lambda*P;
+
+Q:=E![447259,319154];
+
+m:=103803;
+
+m1:=0;
+m0:=m;
+
+//an ad-hoc short vector solver
+min:=Max(m0,m1);
+mini:=min;
+for m0:=1 to 1000 do 
+	for m1:=1 to 1000 do
+		if (m0+m1*lambda) mod r eq m then
+			print m0,m1;
+		end if;	
+	end for;
+end for;
+
+

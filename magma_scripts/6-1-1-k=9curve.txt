@@ -1,0 +1,30 @@
+clear;
+
+x:=2^45+2^41+2^42+2^39+2^40;
+r:=x^6-x^3+1;
+q:=((x+1)^2*(x^6-x^3+1)) div 3-x^7;
+
+while not IsPrime(q) or not IsPrime(r div 3) do
+	x:=x+3;
+	r:=x^6-x^3+1;
+	q:=((x+1)^2*(x^6-x^3+1)) div 3-x^7;
+end while;
+
+Fq:=GF(q);
+r:=r div 3;
+
+i:=1;
+E:=EllipticCurve([Fq|0,i]);
+while (#E mod r) ne 0 do
+	i+:=1;
+	E:=EllipticCurve([Fq|0,i]);
+end while;
+
+k:=9;
+q;
+r;
+
+(q^k-1) mod r;
+#IntegerToSequence(q^k,2);
+#IntegerToSequence(q,2);
+#IntegerToSequence(r,2);

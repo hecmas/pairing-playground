@@ -1,0 +1,67 @@
+clear;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+q:=11;
+Fq:=GF(q);
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+a:=0;
+b:=4;
+E:=EllipticCurve([Fq|a,b]);
+E:=BaseChange(E,Fq2);
+points:=Points(E);
+Et:=EllipticCurve([Fq2|a,-b]);
+pointsT:=Points(Et);
+
+TorsPts:={};
+for i:=1 to #points do
+	if 3*points[i] eq Identity(E) then
+		Include(~TorsPts,points[i]);
+	end if;
+end for;
+
+TorsPtsTwist:={};
+for i:=1 to #pointsT do
+	if 3*pointsT[i] eq Identity(Et) then
+		Include(~TorsPtsTwist,pointsT[i]);
+	end if;
+end for;
+
+FlowerGenerator(TorsPts);
+FlowerGenerator(TorsPtsTwist);
+
+PsiInv:=function(P,Et);
+	return Et![-P[1],i*P[2]];
+end function;
+
+Psi:=function(Pt,E);
+	return E![-Pt[1],1/i*Pt[2]];
+end function;
+
+P:=Random(TorsPts);
+while P eq PointsAtInfinity(E)[1] do
+	P:=Random(TorsPts);
+end while;	
+
+P;
+PsiInv(P,Et);
+Psi(PsiInv(P,Et),E);
+
+

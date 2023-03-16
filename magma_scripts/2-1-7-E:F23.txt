@@ -1,0 +1,32 @@
+clear;
+Fq:=GF(23);
+a:=5; b:=7;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![2,5];
+Q:=E![12,1];
+
+DBL:=function(P);
+	xP:=P[1]; yP:=P[2];
+	lambda:=(3*xP^2+a)/(2*yP); 
+	nu:=yP-lambda*xP;
+	X:=lambda^2-2*xP;
+	Y:=-(lambda*X+nu);
+	"lambda = ", lambda, "nu = ", nu;
+	return Parent(P)![X,Y];
+end function;
+
+ADD:=function(P,Q);
+	xP:=P[1]; yP:=P[2];
+	xQ:=Q[1]; yQ:=Q[2];
+	lambda:=(yQ-yP)/(xQ-xP);
+	nu:=yP-lambda*xP;
+	X:=lambda^2-xP-xQ;
+	Y:=-(lambda*X+nu);
+	"lambda = ", lambda, "nu = ", nu;
+	return Parent(P)![X,Y];
+end function;
+
+ADD(P,Q) eq (P+Q);
+R:=P+Q;
+DBL(P) eq (2*P);
+S:=2*P;

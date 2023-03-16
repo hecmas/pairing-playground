@@ -1,0 +1,17 @@
+clear;
+Fq:=GF(101);
+a:=1; b:=1;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![47,12];
+pts:=Points(E);
+#E;
+orders:={};
+for i:=1 to #E do
+	Include(~orders,Order(pts[i]));
+end for;
+orders;
+Order(P);
+Order(35*P);
+Order(5*P);
+Order(105*P);
+

@@ -1,0 +1,11 @@
+clear; 
+Fq:=GF(13);
+A2<x,y>:=AffineSpace(Fq,2);
+Eaff:=Curve(A2,[y^2-(x^3+5)]);
+Eproj:=ProjectiveClosure(Eaff); 
+E:=EllipticCurve([Fq|0,5]);
+// IsIsomorphic(E,Eaff); 
+// generates error - must be projective
+IsIsomorphic(E,Eproj);
+#E; 
+Points(E);

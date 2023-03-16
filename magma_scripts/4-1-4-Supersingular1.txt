@@ -1,0 +1,48 @@
+clear;
+q:=59;
+Fq:=GF(q);
+a:=0; b:=1;
+E:=EllipticCurve([Fq|a,b]);
+IsSupersingular(E);
+r:=5;
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+#E(Fq2);
+
+points:=Points(E(Fq2));
+
+TorsPts:={};
+
+for i:=1 to #points do
+	if r*points[i] eq Identity(E) then
+		Include(~TorsPts,points[i]);
+	end if;
+end for;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+FlowerGenerator(TorsPts);
+
+zi3:=24*i + 29;
+for i:=1 to 10 do
+	P:=Random(points);
+	P,E(Fq2)![P[1]*zi3,P[2]];
+end for;
+
+

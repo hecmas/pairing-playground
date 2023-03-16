@@ -1,0 +1,78 @@
+clear;
+
+q:=47;
+Fq:=GF(q);
+a:=21; b:=15;
+E:=EllipticCurve([Fq|a,b]);
+r:=17;
+k:=4;
+Fq4<u>:=ExtensionField<Fq,x|x^4-4*x^2+5>;
+
+P:=E![30,3]; //P:=Random(E); 
+P:=(Order(P) div r)*P;
+E:=BaseChange(E,Fq4);
+P:=E!P;
+Q:=E![5*u^3 + 37*u + 13,7*u^3 + 45*u^2 + 10*u + 7];//Q:=Random(E);
+h:=#E div r^2;
+Q:=h*Q;
+pi:=FrobeniusMap(E);
+O:=PointsAtInfinity(E)[1];
+
+TraceMap:=function(Q,pi);
+	return pi(pi(pi(Q)))+pi(pi(Q))+pi(Q)+Q;
+end function;
+
+Q:=k*Q-TraceMap(Q,pi); // Anti-trace map
+pi(Q)-q*Q; //check
+
+F<x,y>:=FunctionField(E);
+
+fDBL:=function(P);
+	lambda:=(3*P[1]^2+a)/(2*P[2]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-2*P[1]));
+	return F!(l/v);
+end function;
+
+fADD:=function(P,Q);
+	lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-P[1]-P[2]));
+	return F!(l/v);
+end function;
+
+Miller:=function(P,Q,r);
+	Q2:=2*Q;
+	T:=P; f:=1;
+	rbits:=IntegerToSequence(r,2);
+	for i:=#rbits-1 to 2 by -1 do
+		fd:=fDBL(T);
+		T:=2*T;
+		f:=f^2*(fd(Q2)/fd(Q));
+		if rbits[i] eq 1 then
+			fa:=fADD(T,P);
+			T:=T+P;
+			f:=f*fa(Q2)/fa(Q);
+		end if;
+	end for;
+
+	fd:=fDBL(T);
+	T:=2*T;
+	f:=f^2*fd(Q2)/fd(Q);	
+
+	fa:=x-P[1];
+	f:=f*fa(Q2)/fa(Q);
+
+	return f;
+end function;
+
+Tate:=function(P,Q,r);
+	return Miller(P,Q,r)^((q^k-1) div r);
+end function;
+
+Weil:=function(P,Q,r);
+	return Miller(P,Q,r)/Miller(Q,P,r);
+end function;
+

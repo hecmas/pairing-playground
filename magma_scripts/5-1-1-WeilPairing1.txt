@@ -1,0 +1,52 @@
+clear;
+
+q:=23;
+Fq:=GF(q);
+a:=-1; b:=0;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![2,11];
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+r:=3;
+E2:=BaseChange(E,Fq2);
+O:=PointsAtInfinity(E2)[1];
+pi:=FrobeniusMap(E2);
+
+//Q:=(#E2 div r^2)*Random(E2);
+//(pi(Q)-q*Q) eq PointsAtInfinity(E2)[1] and Order(Q) eq 3;
+
+P:=E2!P;
+Q:=E2![21,12*i];
+R:=E2![17*i,2*i + 21];
+S:=E2![10*i + 18,13*i + 13];
+
+F<x,y>:=FunctionField(E2);
+
+fDBL:=function(P);
+	lambda:=(3*P[1]^2+a)/(2*P[2]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-2*P[1]));
+	return F!(l/v);
+end function;
+
+fADD:=function(P,Q);
+	lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-P[1]-P[2]));
+	return F!(l/v);
+end function;
+
+f3P:=fDBL(P)*(x-P[1]);
+lPR:=fADD(P,R);
+f3PR:=f3P/lPR^3;
+f3Q:=fDBL(Q)*(x-Q[1]);
+lQS:=fADD(Q,S);
+f3QS:=f3Q/lQS^3;
+
+
+f3PR(Q+S)*f3QS(R)/(f3PR(S)*f3QS(P+R));
+WeilPairing(P,Q,r);
+WeilPairing(2*P,Q,r);
+WeilPairing(P,2*Q,r);
+

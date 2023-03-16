@@ -1,0 +1,45 @@
+clear;
+
+q:=1021;
+Fq:=GF(q);
+a:=-3; b:=-3;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![379,1011];
+
+m:=655;
+IntegerToSequence(m,2);
+
+DBL:=function(P);
+	xP:=P[1]; yP:=P[2];
+	lambda:=(3*xP^2+a)/(2*yP); 
+	nu:=yP-lambda*xP;
+	X:=lambda^2-2*xP;
+	Y:=-(lambda*X+nu);
+	return Parent(P)![X,Y];
+end function;
+
+ADD:=function(P,Q);
+	xP:=P[1]; yP:=P[2];
+	xQ:=Q[1]; yQ:=Q[2];
+	lambda:=(yQ-yP)/(xQ-xP);
+	nu:=yP-lambda*xP;
+	X:=lambda^2-xP-xQ;
+	Y:=-(lambda*X+nu);
+	return Parent(P)![X,Y];
+end function;
+
+Scalar:=function(m,P);
+	B:=IntegerToSequence(m,2);
+	R:=P;
+	for i:=#B-1 to 1 by -1 do
+		R:=DBL(R);
+		if B[i] eq 1 then
+			R:=ADD(R,P);
+		end if;
+	end for;
+	return R;
+end function;
+
+Scalar(m,P) eq m*P;
+m*P;
+

@@ -1,0 +1,11 @@
+clear;
+q:=11;
+Fq:=GF(q);
+E:=EllipticCurve([Fq|4,3]);
+#E;
+Points(E);
+PointsAtInfinity(E);
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+#E(Fq2);
+P:=E(Fq2)![2,5*i];
+Q:=E(Fq2)![2*i+10,7*i+2];

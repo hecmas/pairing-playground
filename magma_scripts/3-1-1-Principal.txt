@@ -1,0 +1,43 @@
+clear;
+q:=103;
+Fq:=GF(q);
+a:=20; b:=20;
+E:=EllipticCurve([Fq|a,b]);
+F<x,y>:=FunctionField(E);
+
+P:=E![26,20];
+Q:=E![63,78];
+R:=E![59,95];
+S:=E![24,25];
+T:=E![77,84];
+U:=E![30,99];
+O:=PointsAtInfinity(E)[1];
+
+Degree(Divisor(S)+Divisor(T)-Divisor(P)) eq 0;
+
+D:=Divisor(P)+Divisor(Q)-Divisor(R)-Divisor(S);
+Degree(D);
+P+Q-R-S eq PointsAtInfinity(E)[1];
+IsPrincipal(D);
+
+D:=Divisor(P)+Divisor(Q)-Divisor(R)-Divisor(T);
+Degree(D);
+P+Q-R-T eq PointsAtInfinity(E)[1];
+IsPrincipal(D);
+bool,f:=IsPrincipal(D);
+
+D:=Divisor(P)+Divisor(Q)-Divisor(U);
+Degree(D);
+P+Q-U;
+IsPrincipal(D);
+
+D:=D-Divisor(O);
+Degree(D);
+IsPrincipal(D);
+bool,g:=IsPrincipal(D);
+
+Zeros(f);
+Poles(f);
+Zeros(g);
+Poles(g);
+

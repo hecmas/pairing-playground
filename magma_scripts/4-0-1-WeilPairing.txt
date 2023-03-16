@@ -1,0 +1,25 @@
+clear;
+
+q:=7691;
+Fq:=GF(q);
+a:=0; b:=1;
+E:=EllipticCurve([Fq|a,b]);
+Factorization(#E);
+P:=E![2693,4312];
+Fq2<i>:=ExtensionField<Fq,x|x^2+1>;
+E:=BaseChange(E,Fq2);
+Factorization(#E);
+P:=E!P;
+Q:=E![633*i+6145,7372*i+109];
+r:=641;
+WeilPairing(P,Q,r);
+WeilPairing(P,Q,r)^r;
+a:=403; b:=135;
+a*P;
+b*Q;
+WeilPairing(a*P,Q,r);
+WeilPairing(a*P,Q,r) eq WeilPairing(P,Q,r)^a;
+WeilPairing(P,b*Q,r);
+WeilPairing(P,b*Q,r) eq WeilPairing(P,Q,r)^b;
+WeilPairing(a*P,b*Q,r);
+WeilPairing(a*P,b*Q,r) eq WeilPairing(P,Q,r)^(a*b);

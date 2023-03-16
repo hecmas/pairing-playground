@@ -1,0 +1,15 @@
+clear;
+
+//Use the functions from the previous example
+
+Zx<x>:=PolynomialRing(Rationals());
+
+k:=16;
+px:= 1/980*( x^10+2*x^9+5*x^8+48*x^6+152*x^5+240*x^4+625*x^2+2398*x+3125 );
+rx:= x^8+48*x^4+625;
+tx:= 1/35*(2*x^5+41*x+35);
+
+setOptimalPairing(~px,~rx,~tx,~k,~Zx,~x,~z,~N,~pivot_index,~flag);
+print N;
+printf "The shortest vector is: %o", N[pivot_index];
+

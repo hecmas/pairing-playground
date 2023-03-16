@@ -1,0 +1,25 @@
+clear;
+
+q:=19;
+Fq:=GF(q);
+a:=0; b:=5;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![-1,2];
+AllRoots(Fq!1,3);
+zi3:=AllRoots(Fq!1,3)[2];
+E![P[1]*zi3,P[2]];
+
+clear;
+
+q:=23;
+Fq:=GF(q);
+a:=0; b:=5;
+Fq2<u>:=ExtensionField<Fq,x|x^2+1>;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![-1,2];
+AllRoots(Fq!1,3);
+AllRoots(Fq2!1,3);
+zi3:=AllRoots(Fq2!1,3)[2];
+E(Fq2)![P[1]*zi3,P[2]];
+
+#AutomorphismGroup(E);

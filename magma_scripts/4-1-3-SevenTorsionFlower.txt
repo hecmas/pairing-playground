@@ -1,0 +1,53 @@
+clear;
+q:=11;
+Fq:=GF(q);
+a:=7; b:=2;
+E:=EllipticCurve([Fq|a,b]);
+Fq3<u>:=ExtensionField<Fq,x|x^3+x+4>;
+r:=7;
+//SetPowerPrinting(Fq3,false);
+points:=Points(E(Fq3));
+
+TorsPts:={};
+
+for i:=1 to #points do
+	if r*points[i] eq Identity(E) then
+		Include(~TorsPts,points[i]);
+	end if;
+end for;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+FlowerGenerator(TorsPts);
+
+pi:=FrobeniusMap(E);
+
+function TraceMap(P,pi);
+	return pi(pi(P))+pi(P)+P;
+end function;
+
+P:=E(Fq3)![u^481,u^1049];
+TraceMap(P,pi);
+
+Q:=E(Fq3)![u^423,u^840];
+TraceMap(Q,pi);
+
+R:=E(Fq3)![u^1011,u^1244];
+TraceMap(R,pi);

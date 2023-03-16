@@ -1,0 +1,11 @@
+clear;
+Fq:=GF(11);
+Poly<x>:=PolynomialRing(Fq);
+f:=x^3-2*x;
+y:=x; 
+Roots(y^2-f);
+E:=EllipticCurve(f);
+P:=E![5,7]; Q:=E![8,10];
+y:=x+2;
+Roots(y^2-f); 
+P+Q;

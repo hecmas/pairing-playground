@@ -1,0 +1,9 @@
+clear;
+Q:=Rationals();
+Qext<alpha>:=ExtensionField<Q,x|x^2+2>;
+E:=EllipticCurve([Q|0,-2]);
+Eext:=E(Qext);
+P:=E![3,5];
+S:=Eext![0,alpha];
+2*P;
+3*P;

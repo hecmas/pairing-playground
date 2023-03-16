@@ -1,0 +1,7 @@
+clear; 
+Fq:=GF(41);
+E:=EllipticCurve([Fq|4,-1]);
+P2<X,Y,Z>:=ProjectiveSpace(Fq,2);
+Eproj:=Curve(P2,[Y^2*Z-(X^3+4*X*Z^2-Z^3)]);
+IsIsomorphic(E,Eproj);
+

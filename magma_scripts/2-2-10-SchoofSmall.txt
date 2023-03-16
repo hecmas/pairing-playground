@@ -1,0 +1,18 @@
+clear;
+
+//We just do l=3, since t=0 there
+
+q:=13;
+Fq:=GF(q);
+a:=2; b:=1;
+E:=EllipticCurve([Fq|2,1]);
+Poly<x,y>:=PolynomialRing(Fq,2);
+Exy:=y^2-(x^3+a*x+b);
+
+l:=3;
+psi3:=Evaluate(DivisionPolynomial(E,3),x);
+I3:=Ideal([Exy,psi3]);
+R3:=quo<Poly|I3>;
+
+R3!(x^(q^2)); 
+R3!x; 

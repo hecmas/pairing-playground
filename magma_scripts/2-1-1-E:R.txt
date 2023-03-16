@@ -1,0 +1,17 @@
+clear;
+R:=RealField();
+Poly<x>:=PolynomialRing(R);
+f:=x^3-2*x;
+y:=x; 
+Roots(y^2-f);
+E:=EllipticCurve(f);
+P1:=E![-1,-1];
+P2:=E![0,0];
+P3:=E![2,2];
+P1+P2;
+P2+P3;
+P1+P3;
+P2+P2;
+y:=-1/2*x-3/2;
+Roots(y^2-f); 
+2*P1;

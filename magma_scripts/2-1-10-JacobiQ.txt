@@ -1,0 +1,22 @@
+q:=97;
+Fq:=GF(q);
+Poly<x>:=PolynomialRing(Fq);
+a:=5; b:=5;
+E:=EllipticCurve([Fq|a,b]);
+theta:=Roots(x^3+a*x+b)[1][1];
+
+epsilon:=-(3*theta^2+4*a)/16;
+delta:=3*theta/4;
+
+R<X,Y>:=PolynomialRing(Fq,2);
+J<X,Y>:=Curve(AffineSpace(R),ideal<R|Y^2-(epsilon*X^4-2*delta*X^2+1)>);
+JQ:=ProjectiveClosure(J);
+IsIsomorphic(JQ,E);
+
+P:=E![77,21];
+
+toJ :=function(P,E,J)
+	x:=P[1]; y:=P[2];
+	return J![ (2*(x-34))/y , ((2*x+34)*(x-34)^2-y^2)/y^2];
+end function;
+

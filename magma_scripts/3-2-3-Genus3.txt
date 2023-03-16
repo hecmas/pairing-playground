@@ -1,0 +1,19 @@
+clear;
+q:=RandomPrime(50);
+Fq:=GF(q);
+Poly<x>:=PolynomialRing(Fq);
+f6:=Random(Fq); f5:=Random(Fq); f4:=Random(Fq); f3:=Random(Fq); f2:=Random(Fq); f1:=Random(Fq); f0:=Random(Fq);
+f:=x^7;
+for i:=6 to 0 by -1 do
+	f:=f+Random(Fq)*x^i;
+end for;
+C2:=HyperellipticCurve(f);
+Genus(C2);
+F<x,y>:=FunctionField(C2);
+O:=PointsAtInfinity(C2)[1];
+
+P1:=Random(C2); P2:=Random(C2); P3:=Random(C2); P4:=Random(C2); P5:=Random(C2); P6:=Random(C2);
+D:=Divisor(P1)+Divisor(P2)+Divisor(P3)+Divisor(P4)+Divisor(P5)+Divisor(P6)-6*Divisor(O);
+
+l:=F!y-F!Interpolation([P1[1],P2[1],P3[1],P4[1]],[P1[2],P2[2],P3[2],P4[2]]);
+Support(Divisor(l));

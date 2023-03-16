@@ -1,0 +1,69 @@
+clear;
+
+function FlowerGenerator(TorsPts);
+	V:={};
+	S:=TorsPts;
+	petals:=Integers()!Sqrt(#S)+1;
+	ptsInPet:=petals-1;
+	T:={};
+
+	for i:=1 to petals do
+		S:=S diff V;
+  		P:=Random(S);
+	        while P[3] eq 0 do
+			P:=Random(S);
+  		end while;
+	V:={j*P:j in [1..ptsInPet]};
+ 	Include(~T,V);
+	end for;
+return T;
+end function;
+
+unTwist:=function(P,u,E);
+	return E![P[1]/u^2,P[2]/u^3];
+end function;
+
+Twist:=function(P,u,Et);
+	return Et![P[1]*u^2,P[2]*u^3];
+end function;
+
+q:=103;
+Fq:=GF(q);
+a:=0; b:=72;
+E:=EllipticCurve([Fq|a,b]);
+r:=7;
+Fq6<u>:=ExtensionField<Fq,x|x^6+2>;
+E:=BaseChange(E,Fq6);
+Et:=EllipticCurve([Fq6|0,b*u^6]);
+n:=#E;
+h:=n div r^2;
+
+TorsPts:={};
+TorsPtsTwist:={};
+
+while #TorsPts lt r^2 do
+	P:=Random(E);
+	hP:=h*P;
+	if hP notin TorsPts then
+		for i:=1 to 6 do
+			Include(~TorsPts,i*hP);
+		end for;
+	end if;
+end while;
+while #TorsPtsTwist lt r^2 do
+	P:=Random(Et);
+	hP:=h*P;
+	if hP notin TorsPtsTwist then
+		for i:=1 to 6 do
+			Include(~TorsPtsTwist,i*hP);
+		end for;
+	end if;
+end while;
+
+FlowerGenerator(TorsPts);
+FlowerGenerator(TorsPtsTwist);
+
+P:=Random(TorsPts);
+P;
+Twist(P,u,Et);
+unTwist(Twist(P,u,Et),u,E);

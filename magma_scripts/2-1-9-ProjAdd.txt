@@ -1,0 +1,22 @@
+clear;
+
+PROJADD:=function(XP,YP,ZP,XQ,YQ,ZQ);
+
+	XR:=(XP*ZQ-XQ*ZP)*(ZP*ZQ*(YP*ZQ-YQ*ZP)^2-(XP*ZQ-XQ*ZP)^2*(XP*ZQ+XQ*ZP));
+	YR:=ZP*ZQ*(XQ*YP-XP*YQ)*(XP*ZQ-XQ*ZP)^2-(YP*ZQ-YQ*ZP)*((YP*ZQ-YQ*ZP)^2*ZP*ZQ-(XP*ZQ+XQ*ZP)*(XP*ZQ-XQ*ZP)^2);
+	ZR:=ZP*ZQ*(XP*ZQ-XQ*ZP)^3;
+
+	return XR,YR,ZR;
+
+end function;
+
+Fq:=GF(NextPrime(Random(0,2^10))); //Random Curve
+a:=Random(Fq); b:=Random(Fq);
+E:=EllipticCurve([Fq|a,b]);
+
+P:=Random(E); Q:=Random(E);
+XP:=P[1]; YP:=P[2]; ZP:=P[3];
+XQ:=Q[1]; YQ:=Q[2]; ZQ:=Q[3];
+
+XR,YR,ZR:=PROJADD(XP,YP,ZP,XQ,YQ,ZQ);
+E![XR,YR,ZR];

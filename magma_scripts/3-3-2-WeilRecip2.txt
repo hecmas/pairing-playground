@@ -1,0 +1,40 @@
+clear;
+
+Fq:=GF(RandomPrime(20));
+a:=Random(Fq); b:=Random(Fq);
+E:=EllipticCurve([Fq|a,b]);
+F<x,y>:=FunctionField(E);
+O:=PointsAtInfinity(E)[1];
+
+DBL:=function(P);
+	xP:=P[1]; yP:=P[2];
+	lambda:=(3*xP^2+a)/(2*yP); 
+	nu:=yP-lambda*xP;
+	return F!(y-(lambda*x+nu));
+end function;
+
+ADD:=function(P,Q);
+	xP:=P[1]; yP:=P[2];
+	xQ:=Q[1]; yQ:=Q[2];
+	lambda:=(yQ-yP)/(xQ-xP);
+	nu:=yP-lambda*xP;
+	return F!(y-(lambda*x+nu));
+end function;
+
+P:=Random(E);
+R:=Random(E);
+S:=Random(E);
+T:=-(R+S);
+
+l:=ADD(R,S);
+ld:=DBL(P);
+
+//ld(R)*ld(S)*ld(T)/ld(O)^3; error because..
+ld(O);
+
+U:=Random(E);
+RU:=R+U;
+SU:=S+U;
+TU:=T+U;
+ld(RU)*ld(SU)*ld(TU)/ld(U)^3;
+

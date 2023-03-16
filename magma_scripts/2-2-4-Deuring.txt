@@ -1,0 +1,26 @@
+clear;
+
+q:=23;
+Fq:=GF(q);
+
+low:=q+1-Floor(2*Sqrt(q));
+high:=q+1+Floor(2*Sqrt(q));
+size:=high-low;
+
+curves:=[];
+orders:=[];
+
+while #curves lt (size+1) do
+	a:=Random(Fq);
+	b:=Random(Fq);
+	if IsEllipticCurve([a,b]) then
+		E:=EllipticCurve([Fq|a,b]);
+		if #E notin orders then
+			curves:=Append(curves,[E]);
+			orders:=Append(orders,#E);
+		end if;
+	end if;
+end while;
+
+curves;
+orders;

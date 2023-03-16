@@ -1,0 +1,7 @@
+clear;
+k:=24;
+Poly<x>:=PolynomialRing(Rationals());
+p:= 1/3*(x-1)^2*(x^8-x^4+1)+x;
+r:= x^8 - x^4 + 1;
+t:= x+1;
+Degree(r)/EulerPhi(k) eq Degree(t);

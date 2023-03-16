@@ -1,0 +1,32 @@
+clear;
+q:=RandomPrime(50);
+Fq:=GF(q);
+a:=Random(Fq); b:=Random(Fq);
+E:=EllipticCurve([Fq|a,b]);
+F<x,y>:=FunctionField(E);
+
+DBL:=function(P);
+	xP:=P[1]; yP:=P[2];
+	lambda:=(3*xP^2+a)/(2*yP); 
+	nu:=yP-lambda*xP;
+	x2P:=lambda^2-2*xP;
+	l:=F!(y-(lambda*x+nu));
+	v:=F!(x-x2P);
+	return l,v;
+end function;
+
+ADD:=function(P,Q);
+	xP:=P[1]; yP:=P[2];
+	xQ:=Q[1]; yQ:=Q[2];
+	lambda:=(yQ-yP)/(xQ-xP);
+	nu:=yP-lambda*xP;
+	xPQ:=lambda^2-xP-xQ;
+	l:=F!(y-(lambda*x+nu));
+	v:=F!(x-xPQ);
+	return l,v;
+end function;
+
+P:=Random(E); Q:=Random(E); 
+l,v:=ADD(P,Q);
+Support(Divisor(l));
+Support(Divisor(v));

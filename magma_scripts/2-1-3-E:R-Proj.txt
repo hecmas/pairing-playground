@@ -1,0 +1,11 @@
+clear;
+R:=RealField();
+E:=EllipticCurve([R|3,0]);
+P:=E![3,6];
+lambda:=Random(0,1000);
+E![3*lambda, 6*lambda, lambda] eq P;
+E![12,24,4] eq P;
+E![3*Sqrt(2), 6*Sqrt(2),Sqrt(2)] eq P;
+C:=ComplexField();
+EC:=E( C);
+EC![3*Sqrt(-1), 6*Sqrt(-1), Sqrt(-1)] eq P;

@@ -1,0 +1,41 @@
+clear;
+
+q:=23;
+Fq:=GF(q);
+a:=17; b:=6;
+E:=EllipticCurve([Fq|a,b]);
+P:=E![10,7];
+O:=PointsAtInfinity(E)[1];
+
+F<x,y>:=FunctionField(E);
+
+D1:=Divisor(P)-Divisor(O);
+D2:=2*Divisor(P)-Divisor(2*P)-Divisor(O);
+D3:=3*Divisor(P)-Divisor(3*P)-2*Divisor(O);
+D4:=4*Divisor(P)-Divisor(4*P)-3*Divisor(O);
+D5:=5*Divisor(P)-Divisor(5*P)-4*Divisor(O);
+
+fDBL:=function(P);
+	lambda:=(3*P[1]^2+a)/(2*P[2]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-2*P[1]));
+	return F!(l/v);
+end function;
+
+fADD:=function(P,Q);
+	lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-P[1]-P[2]));
+	return F!(l/v);
+end function;
+
+lPP:=fDBL(P);
+lP2P:=fADD(P,2*P);
+lP3P:=fADD(P,3*P);
+//fP4P:=fADD(P,4*P); THIS IS DEFINED AS 1
+lP4P:=(x-10);
+
+f5P:=lPP*lP2P*lP3P*lP4P;
+Support(Divisor(f5P));

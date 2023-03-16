@@ -1,0 +1,54 @@
+clear;
+
+q:=5;
+Fq:=GF(q);
+Fq2<i>:=ExtensionField<Fq,x|x^2+2>;
+a:=0;
+b:=-3;
+E:=EllipticCurve([Fq|a,b]);
+E:=BaseChange(E,Fq2);
+O:=PointsAtInfinity(E)[1];
+F<x,y>:=FunctionField(E);
+
+r:=3;
+h:=#E div r^2;
+
+fDBL:=function(P);
+	lambda:=(3*P[1]^2+a)/(2*P[2]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-2*P[1]));
+	return F!(l/v);
+end function;
+
+fADD:=function(P,Q);
+	lambda:=(Q[2]-P[2])/(Q[1]-P[1]);
+	c:=P[2]-lambda*P[1];
+	l:=F!(y-(lambda*x+c));
+	v:=F!(x-(lambda^2-P[1]-P[2]));
+	return F!(l/v);
+end function;
+
+P:=E![3,2];
+Q:=E![i+1,4*i+2];
+R:=E![2*i,i+2];
+
+f:=fDBL(P);
+f:=f*(x-(2*P)[1]);
+Support(Divisor(f));
+
+DQ:=Divisor(Q+R)-Divisor(R);
+IsLinearlyEquivalent(DQ,Divisor(Q)-Divisor(O));
+
+//TatePairing(P,Q,r); Magma computes f(Q) directly
+
+f(Q+R)/f(R);
+f(2*Q+R)/f(R);
+
+P2:=2*P;
+ft:=fDBL(P2);
+ft:=ft*(x-(2*P2)[1]);
+Support(Divisor(ft));
+
+ft(Q+R)/ft(R);
+

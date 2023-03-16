@@ -1,0 +1,37 @@
+clear;
+Q:=Rationals();
+Qext<alpha>:=ExtensionField<Q,x|x^2+2>;
+E:=EllipticCurve([Q|0,-2]);
+Eext:=E(Qext);
+P:=E![3,5];
+S:=Eext![0,alpha];
+
+DBL:=function(P);
+	xP:=P[1]; yP:=P[2];
+	lambda:=(3*xP^2)/(2*yP); //a=0 on E
+	nu:=yP-lambda*xP;
+	X:=lambda^2-2*xP;
+	Y:=-(lambda*X+nu);
+	return Parent(P)![X,Y];
+end function;
+
+ADD:=function(P,Q);
+	xP:=P[1]; yP:=P[2];
+	xQ:=Q[1]; yQ:=Q[2];
+	lambda:=(yQ-yP)/(xQ-xP);
+	nu:=yP-lambda*xP;
+	X:=lambda^2-xP-xQ;
+	Y:=-(lambda*X+nu);
+	return Parent(P)![X,Y];
+end function;
+	
+2*P eq DBL(P);
+Q:=DBL(P);
+ADD(P,Q) eq (P+Q);
+R:=P+Q;
+3*P eq R;
+
+#IntegerToSequence(Denominator((10*P)[2]),2);
+#IntegerToSequence(Denominator((100*P)[2]),2);
+#IntegerToSequence(Denominator((1000*P)[2]),2);
+

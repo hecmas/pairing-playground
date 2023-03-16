@@ -1,0 +1,28 @@
+clear;
+//This one takes a while 
+x:=2^50+21;
+r:=(x^8+48*x^4+625) div 61250;
+q:=(x^10+2*x^9+5*x^8+48*x^6+152*x^5+240*x^4+625*x^2+2398*x+3125) div 980;
+
+while not IsPrime(r) or not IsPrime(q) do
+	if x mod 70 eq 25 then
+		x+:=20;
+	else 
+		x+:=50;
+	end if;
+	r:=(x^8+48*x^4+625) div 61250;
+	q:=(x^10+2*x^9+5*x^8+48*x^6+152*x^5+240*x^4+625*x^2+2398*x+3125) div 980;
+end while;
+
+Fq:=GF(q);
+i:=1;
+E:=EllipticCurve([Fq|i,0]);
+while #E mod r ne 0 do
+	i:=i+1;
+	E:=EllipticCurve([Fq|i,0]);
+end while;
+	
+E;
+#IntegerToSequence(q^16,2);
+#IntegerToSequence(q,2);
+#IntegerToSequence(r,2);

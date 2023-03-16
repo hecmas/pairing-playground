@@ -1,0 +1,18 @@
+clear;
+q:=RandomPrime(50);
+Fq:=GF(q);
+E:=EllipticCurve([Fq|Random(Fq),Random(Fq)]);
+
+P:=Random(E); Q:=Random(E); R:=Random(E); S:=Random(E);
+
+D1:=2*Divisor(P)-3*Divisor(Q);
+D2:=3*Divisor(Q)+Divisor(R)-Divisor(S);
+
+Degree(D1);
+Degree(D2);
+Degree(D1+D2);
+
+Support(D1); 
+Support(D2);
+Support(D1+D2);
+
