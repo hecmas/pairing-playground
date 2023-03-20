@@ -8,6 +8,8 @@ from tools import log2, embedding_degree, line
 # For sure, Q is assumed to be from the trace zero subgroup of E[r] over F_{q**k}
 # P is assumed to be from the (only) subgroup of E[r] over F_q
 # i.e., a (reversed) Type 3 pairing is assumed
+# Note: Since the loop goes only until |t-1| < r, we cannot save the last "add"
+#       in the "double-and-add" as in the Tate pairing 
 def Miller_Loop(Q,P):
     R = Q
     f = F.one()
