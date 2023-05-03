@@ -15,11 +15,11 @@ The file `tools.sage` contains various methods shared among all the previous fil
 - [x] Weil pairing.
 - [x] Tate pairing.
 - [x] Ate pairing.
+- [ ] Twists.
 - [ ] Endomorphisms.
 - [ ] Projective coordinates.
 - [ ] Final exponentiation optimizations.
 
 The following functionalities cannot be directly implemented in Sage (since we cannot extend finite fields of non-prime order), so I defer their implementation in Python to a later stage of this repo:
 - [ ] Towered extension fields.
-- [ ] Twists.
 - [ ] Optimal pairings. In particular, the optimal ate pairing.
