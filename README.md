@@ -15,7 +15,7 @@ The file `tools.sage` contains various methods shared among all the previous fil
 - [x] Weil pairing.
 - [x] Tate pairing.
 - [x] Ate pairing.
-- [ ] Twists.
+- [x] Twists.
 - [ ] Endomorphisms.
 - [ ] Projective coordinates.
 - [ ] Final exponentiation optimizations.
