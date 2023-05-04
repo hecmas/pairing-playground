@@ -50,10 +50,7 @@ def Miller_Loop(P,D):
 
     return f
 
-# I am not sure why this doesn't work, but I have noticed that after 
-# comparing y² and x³ + 4 over Fp12 (to check that twist(Q) is on eE), the difference is minimal
-# Maybe a bigint representation issue?
-def twist(eE,Q,d):
+def untwist(eE,Q,d):
     Fpk = eE.base_field()
 
     if Q.is_zero():
@@ -71,16 +68,16 @@ def twist(eE,Q,d):
         assert eE.a6() == 0
 
     _x,_y = Q.xy()
-    # Field isomorphism from F[i]/<i²+1> to F[j]/<j² - 2·j + 2>
+    # Isomorphism from F[i]/<i²+1> to F[j]/<j² - 2·j + 2>
     xcoeffs = [_x.polynomial().list()[0] - _x.polynomial().list()[1],_x.polynomial().list()[1]]
     ycoeffs = [_y.polynomial().list()[0] - _y.polynomial().list()[1],_y.polynomial().list()[1]]
 
-    # Isomorphism into subfield of F[w]/<w¹² - 2·w⁶ + 2>,
+    # Isomorphism into the subfield of F[w]/<w¹² - 2·w⁶ + 2>,
     # where w⁶ = j
     nx = Fpk(xcoeffs[0] + w^6*xcoeffs[1])
     ny = Fpk(ycoeffs[0] + w^6*ycoeffs[1])
 
-    return (nx * w^2, ny * w^3)
+    return eE(nx / w^2, ny / w^3)
 
 def Weil(P,Q):
     if P.is_zero() or Q.is_zero():
@@ -194,9 +191,9 @@ P = E(36854167537133870167810883151830777579616207957825464098945783786886075923
       1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569)
 assert r*P == E(0) # P is in the r-torsion subgroup
 
-# To define Q, we need to move to the extension field F_{q**k}
+# To define Q, we need to move to the extension field Fp2
 Fp2.<i> = GF(q^2, modulus=x^2+1)
-tE = EllipticCurve(Fp2, [0,4*i+4])
+tE = EllipticCurve(Fp2, [0,4*(i+1)])
 
 Q = tE(Fp2(3059144344244213709971259814753781636986470325476647558659373206291635324768958432433509563104347017837885763365758*i 
         + 352701069587466618187139116011060144890029952792775240219908644239793785735715026873347600343865175952761926303160),
@@ -205,24 +202,19 @@ Q = tE(Fp2(305914434424421370997125981475378163698647032547664755865937320629163
 assert r*Q == tE(0) # Q is in the r-torsion subgroup
 
 Fp12.<w> = GF(q^12, modulus=x^12 - 2*x^6 + 2)
+PRK.<x,y> = PolynomialRing(Fp12)
 eE = E.base_extend(Fp12)
-tQ = twist(eE,Q,6)
-print(tQ)
-print(eE(tQ))
 
-# print(Tate(P,twist(E,Q,6,Fp12(w))))
-# assert Tate(P,Q) == 15*i + 2
+# For sure, the pairing is non-degenerate
+# assert P.additive_order() == tQ.additive_order() == r
+assert Tate(P,untwist(eE,Q,6)) != F.one()
 
-# # For sure, the pairing is non-degenerate
-# assert P.additive_order() == Q.additive_order() == r
-# assert Tate(P,Q) != F.one()
+# Let's check the bilinearity of the pairing
+assert Tate(2*P,untwist(eE,2*Q,6)) == Tate(P,untwist(eE,2*Q,6))^2 == Tate(2*P,untwist(eE,Q,6))^2 == Tate(P,untwist(eE,Q,6))^4 == Tate(2*P,untwist(eE,2*Q,6))
 
-# # Let's check the bilinearity of the pairing
-# assert Tate(2*P,2*Q) == Tate(P,2*Q)^2 == Tate(2*P,Q)^2 == Tate(P,Q)^4 == Tate(2*P,2*Q)
+# Check the trivial evaluations are satisfied
+assert Tate(E(0),untwist(eE,Q,6)) == Tate(P,untwist(eE,tE(0),6)) == F.one()
 
-# # Check the trivial evaluations are satisfied
-# assert Tate(E(0),Q) == Tate(P,E(0)) == F.one()
-
-# # Since P and Q are generators, we should have that Tate(P,D) is a primitive r-th root of unity
-# # i.e. a generator of set of roots of unity of order r
-# assert multiplicative_order(Tate(P,Q)) == r
+# Since P and Q are generators, we should have that Tate(P,D) is a primitive r-th root of unity
+# i.e. a generator of set of roots of unity of order r
+# assert multiplicative_order(Tate(P,untwist(eE,Q,6))) == r
