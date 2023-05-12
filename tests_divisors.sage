@@ -18,6 +18,8 @@ assert D1.support == [E(1,15), E(1,32)]
 assert D2.support == [E(1,32), E(2,21), E(6,13)]
 assert D3.support == [E(1,15), E(2,21), E(6,13)]
 
+# TODO: Divisor equivalence
+
 # The zero divisor
 assert (D1 - D1).is_zero() == True
 
@@ -52,6 +54,8 @@ F = GF(q)
 E = EllipticCurve(F, [0,1])
 P1,P2,P3,P4 = E(433,98),E(232,113),E(432,27),E(127,258)
 Q1,Q2,Q3,Q4 = E(413,369),E(339,199),E(147,443),E(124,42)
+
+# TODO: Implement f --> (f)
 
 PR.<x,y> = PolynomialRing(F)
 f = (20*y + 9*x + 179)/(199*y + 187*x + 359)
