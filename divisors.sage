@@ -1,6 +1,6 @@
 
 class Divisor():
-    def __init__(self, multiplicites, points):
+    def __init__(self, E, multiplicites, points):
         assert len(multiplicites) == len(points)
         for m in multiplicites:
             assert m in ZZ
@@ -8,6 +8,7 @@ class Divisor():
         # for P in points:
         #     assert P in E
 
+        self.E = E
         self.multiplicites = multiplicites
         self.points = points
         self.degree = sum(multiplicites)
@@ -23,10 +24,11 @@ class Divisor():
 
         result = ""
         for i in range(len(self.multiplicites)-1):
-            result += str(self.multiplicites[i]) + " " + str(self.points[i].xy()) + " + "
+            result += str(self.multiplicites[i]) + \
+                " " + str(self.points[i].xy()) + " + "
 
         result += str(self.multiplicites[-1]) + " " + str(self.points[-1].xy())
-        
+
         return result
 
     def __add__(self, other):
@@ -47,47 +49,63 @@ class Divisor():
                 multiplicites.append(other.sum[key])
                 points.append(key)
 
-        return Divisor(multiplicites, points)
-    
+        return Divisor(self.E, multiplicites, points)
+
     def __neg__(self):
         negative = [-m for m in self.multiplicites]
-        return Divisor(negative, self.points)
+        return Divisor(self.E, negative, self.points)
 
     def __sub__(self, other):
         return self + (-other)
-    
+
     def __eq__(self, other):
-        return self.sum == other.sum
-    
+        if len(self.multiplicites) != len(other.multiplicites) or len(self.points) != len(other.points):
+            return False
+
+        for m in self.multiplicites:
+            if m not in other.multiplicites:
+                return False
+            
+        for P in self.points:
+            if P not in other.points:
+                return False
+
+        return True
+
     def __ne__(self, other):
         return not self == other
 
-    def is_principal(self, E):
-        addition = E(0)
+    def is_principal(self):
+        addition = self.E(0)
         for i in range(len(self.multiplicites)):
             addition += self.multiplicites[i] * self.points[i]
 
-        if addition == E(0) and self.degree == 0:
+        if addition == self.E(0) and self.degree == 0:
             return True
         else:
             return False
+        
+    def equivalent(self, other):
+        D = self - other
+        return D.is_principal()
 
     def is_zero(self):
-        return self == Divisor.zero()
-    
-    @classmethod
-    def zero(cls):
-        return Divisor([], [])
+        return self == Divisor.zero(self.E)
 
-def evaluate_function_on_divisor(f,D):
+    @classmethod
+    def zero(cls, E):
+        return Divisor(E, [], [])
+
+
+def evaluate_function_on_divisor(f, D):
     # TODO: Add a check for disjoint supports
-   
+
     result = 1
     for i in range(len(D.multiplicites)):
         if D.points[i].is_zero():
             # homogenize the function and evaluate at the origin in projective space
             F = f.numerator().homogenize() / f.denominator().homogenize()
-            result *= F(0,1,0) ^ D.multiplicites[i]
+            result *= F(0, 1, 0) ^ D.multiplicites[i]
         else:
             result *= f(D.points[i].xy()) ^ D.multiplicites[i]
 

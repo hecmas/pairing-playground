@@ -83,8 +83,9 @@ def Weil(P,Q):
     if P.is_zero() or Q.is_zero():
         return F.one()
     
-    DP = Divisor([1,-1],[2*P,P])
-    DQ = Divisor([1,-1],[2*Q,Q])
+    E = P.curve()
+    DP = Divisor(E,[1,-1],[2*P,P])
+    DQ = Divisor(E,[1,-1],[2*Q,Q])
     frP = Miller_Loop(P,DQ)
     frQ = Miller_Loop(Q,DP)
     lPP = line(P,P,DQ)
@@ -99,7 +100,8 @@ def Tate(P,Q):
     if P.is_zero() or Q.is_zero():
         return F.one()
     
-    DQ = Divisor([1,-1],[2*Q,Q])
+    E = P.curve()
+    DQ = Divisor(E,[1,-1],[2*Q,Q])
 
     # Here, k is the embedding degree of E
     return Miller_Loop(P,DQ)^((q^k-1)/r)
