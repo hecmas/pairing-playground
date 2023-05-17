@@ -9,12 +9,16 @@ def log2(x):
 
     return r
 
-def embedding_degree(q,r):    
-    k = 1
-    while (q**k - 1) % r != 0:
-        k += 1
+# def embedding_degree(q,r):    
+#     k = 1
+#     while (q**k - 1) % r != 0:
+#         k += 1
 
-    return k
+#     return k
+
+def embedding_degree(q,r):  
+    F = GF(r)  
+    return F(q).multiplicative_order()
 
 # Find line y = mx + c passing through two points P and Q
 # or vertical line y = x0 if Q = -P

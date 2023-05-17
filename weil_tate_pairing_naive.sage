@@ -185,7 +185,8 @@ bls_x = -15132376222941642752
 q = 1/3*(bls_x-1)^2*(bls_x^4 - bls_x^2 + 1) + bls_x
 assert len(bin(q)[2:]) == 381
 r = bls_x^4 - bls_x^2 + 1
-k = 12
+k = embedding_degree(q,r)
+assert 12 == k
 F = GF(q)
 E = EllipticCurve(F, [0,4])
 
@@ -213,8 +214,8 @@ eE = E.base_extend(Fp12)
 # Less efficient subgrup check: Q is in G2 = E(Fp12)[r] ∩ Ker(Frob - [q])
 tQ = untwist(eE,Q,6)
 assert r*tQ == eE(0)
-FrobtQ = eE(tQ.xy()[0]^q,tQ.xy()[1]^q)
-QQ = 4002409555221667393417789825735904156556882819939007885332058136124031650490837864442687629129015664037894272559787*tQ
+FrobtQ = eE(tQ[0]^q,tQ[1]^q)
+QQ = int(q)*tQ
 assert FrobtQ == QQ
 
 # For sure, the pairing is non-degenerate
