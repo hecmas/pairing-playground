@@ -1,6 +1,6 @@
 
 class Divisor():
-    def __init__(self, E, multiplicites, points):
+    def __init__(self, multiplicites, points):
         assert len(multiplicites) == len(points)
         for m in multiplicites:
             assert m in ZZ
@@ -8,7 +8,10 @@ class Divisor():
         # for P in points:
         #     assert P in E
 
-        self.E = E
+        if len(points) >= 1:
+            self.E = points[0].curve()
+        else:
+            self.E = None
         self.multiplicites = multiplicites
         self.points = points
         self.degree = sum(multiplicites)
@@ -49,11 +52,11 @@ class Divisor():
                 multiplicites.append(other.sum[key])
                 points.append(key)
 
-        return Divisor(self.E, multiplicites, points)
+        return Divisor(multiplicites, points)
 
     def __neg__(self):
         negative = [-m for m in self.multiplicites]
-        return Divisor(self.E, negative, self.points)
+        return Divisor(negative, self.points)
 
     def __sub__(self, other):
         return self + (-other)
@@ -76,6 +79,9 @@ class Divisor():
         return not self == other
 
     def is_principal(self):
+        if self.is_zero():
+            return True
+
         addition = self.E(0)
         for i in range(len(self.multiplicites)):
             addition += self.multiplicites[i] * self.points[i]
@@ -90,11 +96,11 @@ class Divisor():
         return D.is_principal()
 
     def is_zero(self):
-        return self == Divisor.zero(self.E)
+        return self == Divisor.zero()
 
     @classmethod
-    def zero(cls, E):
-        return Divisor(E, [], [])
+    def zero(cls):
+        return Divisor([], [])
 
 
 def evaluate_function_on_divisor(f, D):
