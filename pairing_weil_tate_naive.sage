@@ -105,41 +105,41 @@ def Tate(P,Q):
     return Miller_Loop(P,DQ)^((q^k-1)/r)
 
 # Test 1: Weil Pairing
-# q = 23
-# F = GF(q)
-# E = EllipticCurve(F, [-1,0])
-# n = E.order()
-# # the torsion group parameter r is typically chosen 
-# # as the largest prime factor of the order of the curve
-# r = n.factor()[-1][0]
-# k = embedding_degree(q,r)
+q = 23
+F = GF(q)
+E = EllipticCurve(F, [-1,0])
+n = E.order()
+# the torsion group parameter r is typically chosen 
+# as the largest prime factor of the order of the curve
+r = n.factor()[-1][0]
+k = embedding_degree(q,r)
 
-# P = E(2,11)
-# assert r*P == E(0) # P is in the r-torsion subgroup
+P = E(2,11)
+assert r*P == E(0) # P is in the r-torsion subgroup
 
-# # To define Q, we need to move to the extension field F_{q**k}
-# K.<i> = GF(q^k, modulus=x^2+1)
-# PRK.<x,y> = PolynomialRing(K)
-# eE = EllipticCurve(K, [-1,0])
+# To define Q, we need to move to the extension field F_{q**k}
+K.<i> = GF(q^k, modulus=x^2+1)
+PRK.<x,y> = PolynomialRing(K)
+eE = EllipticCurve(K, [-1,0])
 
-# Q = eE(21, 12*i)
-# assert r*Q == eE(0) # Q is in the r-torsion subgroup
+Q = eE(21, 12*i)
+assert r*Q == eE(0) # Q is in the r-torsion subgroup
 
-# assert Weil(P,Q) == 15*i + 11
+assert Weil(P,Q) == 15*i + 11
 
-# # For sure, the pairing is non-degenerate
-# assert P.additive_order() == Q.additive_order() == r
-# assert Weil(P,Q) != F.one()
+# For sure, the pairing is non-degenerate
+assert P.additive_order() == Q.additive_order() == r
+assert Weil(P,Q) != F.one()
 
-# # Let's check the bilinearity of the pairing
-# assert Weil(2*P,2*Q) == Weil(P,2*Q)^2 == Weil(2*P,Q)^2 == Weil(P,Q)^4 == Weil(2*P,2*Q)
+# Let's check the bilinearity of the pairing
+assert Weil(2*P,2*Q) == Weil(P,2*Q)^2 == Weil(2*P,Q)^2 == Weil(P,Q)^4 == Weil(2*P,2*Q)
 
-# # Check the trivial evaluations are satisfied
-# assert Weil(E(0),Q) == Weil(P,E(0)) == F.one()
+# Check the trivial evaluations are satisfied
+assert Weil(E(0),Q) == Weil(P,E(0)) == F.one()
 
-# # Since P and Q are generators, we should have that Weil(P,D) is a primitive r-th root of unity
-# # i.e. a generator of set of roots of unity of order r
-# assert multiplicative_order(Weil(P,Q)) == r
+# Since P and Q are generators, we should have that Weil(P,D) is a primitive r-th root of unity
+# i.e. a generator of set of roots of unity of order r
+assert multiplicative_order(Weil(P,Q)) == r
 
 
 # Test 2: Tate Pairing
@@ -179,55 +179,55 @@ def Tate(P,Q):
 # # i.e. a generator of set of roots of unity of order r
 # assert multiplicative_order(Tate(P,Q)) == r
 
-# Test 2: Tate Pairing over the BLS12-381 curve
-# https://hackmd.io/@benjaminion/bls12-381
-bls_x = -15132376222941642752
-q = 1/3*(bls_x-1)^2*(bls_x^4 - bls_x^2 + 1) + bls_x
-assert len(bin(q)[2:]) == 381
-r = bls_x^4 - bls_x^2 + 1
-k = embedding_degree(q,r)
-assert 12 == k
-F = GF(q)
-E = EllipticCurve(F, [0,4])
+# # Test 3: Tate Pairing over the BLS12-381 curve
+# # https://hackmd.io/@benjaminion/bls12-381
+# bls_x = -15132376222941642752
+# q = 1/3*(bls_x-1)^2*(bls_x^4 - bls_x^2 + 1) + bls_x
+# assert len(bin(q)[2:]) == 381
+# r = bls_x^4 - bls_x^2 + 1
+# k = embedding_degree(q,r)
+# assert 12 == k
+# F = GF(q)
+# E = EllipticCurve(F, [0,4])
 
-P = E(3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507,
-      1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569)
-# Subgrup check: P is in G1 = E(Fp)[r]
-assert r*P == E(0)
+# P = E(3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507,
+#       1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569)
+# # Subgrup check: P is in G1 = E(Fp)[r]
+# assert r*P == E(0)
 
-# To define Q, we need to move to the extension field Fp2
-Fp2.<i> = GF(q^2, modulus=x^2+1)
-tE = EllipticCurve(Fp2, [0,4*(i+1)])
+# # To define Q, we need to move to the extension field Fp2
+# Fp2.<i> = GF(q^2, modulus=x^2+1)
+# tE = EllipticCurve(Fp2, [0,4*(i+1)])
 
-Q = tE(Fp2(3059144344244213709971259814753781636986470325476647558659373206291635324768958432433509563104347017837885763365758*i 
-        + 352701069587466618187139116011060144890029952792775240219908644239793785735715026873347600343865175952761926303160),
-        Fp2(927553665492332455747201965776037880757740193453592970025027978793976877002675564980949289727957565575433344219582*i
-        + 1985150602287291935568054521177171638300868978215655730859378665066344726373823718423869104263333984641494340347905))
+# Q = tE(Fp2(3059144344244213709971259814753781636986470325476647558659373206291635324768958432433509563104347017837885763365758*i 
+#         + 352701069587466618187139116011060144890029952792775240219908644239793785735715026873347600343865175952761926303160),
+#         Fp2(927553665492332455747201965776037880757740193453592970025027978793976877002675564980949289727957565575433344219582*i
+#         + 1985150602287291935568054521177171638300868978215655730859378665066344726373823718423869104263333984641494340347905))
 
-# Subgrup check: Q is in G2' = E'(Fp2)[r]
-assert r*Q == tE(0) # Q is in the r-torsion subgroup
+# # Subgrup check: Q is in G2' = E'(Fp2)[r]
+# assert r*Q == tE(0) # Q is in the r-torsion subgroup
 
-Fp12.<w> = GF(q^12, modulus=x^12 - 2*x^6 + 2)
-PRK.<x,y> = PolynomialRing(Fp12)
-eE = E.base_extend(Fp12)
+# Fp12.<w> = GF(q^12, modulus=x^12 - 2*x^6 + 2)
+# PRK.<x,y> = PolynomialRing(Fp12)
+# eE = E.base_extend(Fp12)
 
-# Less efficient subgrup check: Q is in G2 = E(Fp12)[r] ∩ Ker(Frob - [q])
-tQ = untwist(eE,Q,6)
-assert r*tQ == eE(0)
-FrobtQ = eE(tQ[0]^q,tQ[1]^q)
-QQ = int(q)*tQ
-assert FrobtQ == QQ
+# # Less efficient subgrup check: Q is in G2 = E(Fp12)[r] ∩ Ker(Frob - [q])
+# tQ = untwist(eE,Q,6)
+# assert r*tQ == eE(0)
+# FrobtQ = eE(tQ[0]^q,tQ[1]^q)
+# QQ = int(q)*tQ
+# assert FrobtQ == QQ
 
-# For sure, the pairing is non-degenerate
-# assert P.additive_order() == tQ.additive_order() == r
-assert Tate(P,untwist(eE,Q,6)) != F.one()
+# # For sure, the pairing is non-degenerate
+# # assert P.additive_order() == tQ.additive_order() == r
+# assert Tate(P,untwist(eE,Q,6)) != F.one()
 
-# Let's check the bilinearity of the pairing
-assert Tate(2*P,untwist(eE,2*Q,6)) == Tate(P,untwist(eE,2*Q,6))^2 == Tate(2*P,untwist(eE,Q,6))^2 == Tate(P,untwist(eE,Q,6))^4 == Tate(2*P,untwist(eE,2*Q,6))
+# # Let's check the bilinearity of the pairing
+# assert Tate(2*P,untwist(eE,2*Q,6)) == Tate(P,untwist(eE,2*Q,6))^2 == Tate(2*P,untwist(eE,Q,6))^2 == Tate(P,untwist(eE,Q,6))^4 == Tate(2*P,untwist(eE,2*Q,6))
 
-# Check the trivial evaluations are satisfied
-assert Tate(E(0),untwist(eE,Q,6)) == Tate(P,untwist(eE,tE(0),6)) == F.one()
+# # Check the trivial evaluations are satisfied
+# assert Tate(E(0),untwist(eE,Q,6)) == Tate(P,untwist(eE,tE(0),6)) == F.one()
 
-# Since P and Q are generators, we should have that Tate(P,D) is a primitive r-th root of unity
-# i.e. a generator of set of roots of unity of order r
-# assert multiplicative_order(Tate(P,untwist(eE,Q,6))) == r
+# # Since P and Q are generators, we should have that Tate(P,D) is a primitive r-th root of unity
+# # i.e. a generator of set of roots of unity of order r
+# # assert multiplicative_order(Tate(P,untwist(eE,Q,6))) == r

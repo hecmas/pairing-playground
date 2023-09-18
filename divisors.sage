@@ -10,46 +10,60 @@ class Divisor():
 
         if len(points) >= 1:
             self.E = points[0].curve()
+
+            for i in range(1,len(points)):
+                if points[i].curve() != self.E:
+                    raise ValueError("Points must be defined over the same curve")
         else:
             self.E = None
+
+        for i in range(len(multiplicites)-1,-1,-1):
+            if multiplicites[i] == 0:
+                multiplicites.pop(i)
+                points.pop(i)
+
         self.multiplicites = multiplicites
         self.points = points
         self.degree = sum(multiplicites)
         self.support = points
 
-        self.sum = {}
+        self.repr = {}
         for i in range(len(multiplicites)):
-            self.sum[points[i]] = multiplicites[i]
+            self.repr[points[i]] = multiplicites[i]
 
     def __repr__(self):
         if len(self.multiplicites) == 0:
             return "0"
 
         result = ""
-        for i in range(len(self.multiplicites)-1):
-            result += str(self.multiplicites[i]) + \
-                " " + str(self.points[i].xy()) + " + "
+        for i in range(len(self.multiplicites)):
+            if self.multiplicites[i] > 0:
+                if i > 0:
+                    result += " + "
+                result += str(self.multiplicites[i])
+            else:
+                result += " - "  + str(self.multiplicites[i])[1:]
 
-        result += str(self.multiplicites[-1]) + " " + str(self.points[-1].xy())
+            result += "·" + str(self.points[i].xy())
 
         return result
 
     def __add__(self, other):
         multiplicites = []
         points = []
-        for key in self.sum.keys():
-            if key in other.sum.keys():
-                keysum = self.sum[key] + other.sum[key]
+        for key in self.repr.keys():
+            if key in other.repr.keys():
+                keysum = self.repr[key] + other.repr[key]
                 if keysum != 0:
                     multiplicites.append(keysum)
                     points.append(key)
             else:
-                multiplicites.append(self.sum[key])
+                multiplicites.append(self.repr[key])
                 points.append(key)
 
-        for key in other.sum.keys():
-            if key not in self.sum.keys():
-                multiplicites.append(other.sum[key])
+        for key in other.repr.keys():
+            if key not in self.repr.keys():
+                multiplicites.append(other.repr[key])
                 points.append(key)
 
         return Divisor(multiplicites, points)
@@ -62,7 +76,7 @@ class Divisor():
         return self + (-other)
 
     def __eq__(self, other):
-        if len(self.multiplicites) != len(other.multiplicites) or len(self.points) != len(other.points):
+        if len(self.multiplicites) != len(other.multiplicites):
             return False
 
         for m in self.multiplicites:
@@ -82,11 +96,11 @@ class Divisor():
         if self.is_zero():
             return True
 
-        addition = self.E(0)
+        sum = self.E(0)
         for i in range(len(self.multiplicites)):
-            addition += self.multiplicites[i] * self.points[i]
+            sum += self.multiplicites[i] * self.points[i]
 
-        if addition == self.E(0) and self.degree == 0:
+        if sum == self.E(0) and self.degree == 0:
             return True
         else:
             return False
@@ -105,6 +119,7 @@ class Divisor():
 
 def evaluate_function_on_divisor(f, D):
     # TODO: Add a check for disjoint supports
+    #       Implement f --> (f), it seems Sage does not support this
 
     result = 1
     for i in range(len(D.multiplicites)):
